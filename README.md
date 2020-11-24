@@ -2,14 +2,9 @@
 Examples of basic functions in programming a PIC microprocessor using MicroC editor and PICSimlab for testing.
 The examples are made for PIC18F452 Clock:8
 
+There are given some example codes for some functionalities as Interrupts,ADC,Steppers/servo Motors,I2C etc so the basics can be explained.
 
-Example 1: Hello world in LCD
-Example 2: Servo motor 
-Example 3: Strepper motor
-Example 4: Moving Servo Mottor with potentiometer values (ADC)
-Example 5: I2C/Usart
-Example 5: Printing current Date and Time in LCD
-Example 6: Interrupts
+Warning: Micro C and PIC Simlab are both difficult to use as they have a lot of buggs and it is quite possible for obstacles to appear.
 
 
 
