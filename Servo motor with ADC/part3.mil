@@ -1,0 +1,248 @@
+_read_keypad:
+  begin
+//part3.c,7 :: 		PORTD = 0xFF;
+	PORTD <- 255
+//part3.c,8 :: 		TRISD = 0xFF;    //configure PORT D as inpout
+	TRISD <- 255
+//part3.c,9 :: 		TRISB = 0x00;     //configure PORT B as outpout
+	TRISB <- 0
+//part3.c,10 :: 		PORTB = 0xFF;     //set all pins of PORT B to 1;
+	PORTB <- 255
+//part3.c,12 :: 		key =0;
+	read_keypad_key_L0 <- 0
+//part3.c,13 :: 		do {                       //1-5 buttons
+L_read_keypad_0:
+//part3.c,15 :: 		PORTB.F0 = 0;
+	PORTB <-  PORTB & -2
+//part3.c,16 :: 		delay_ms(10);
+	asm: MOVLW	26
+	asm: MOVWF	STACK_11
+	asm: MOVLW	255
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_11,F
+	asm: GOTO	$+2
+	asm: GOTO	$+4
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: GOTO	$-5
+	asm: MOVLW	231
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: nop
+//part3.c,17 :: 		var = PORTD;
+	read_keypad_var_L0 <- PORTD
+//part3.c,19 :: 		if (var.F2 == 0) key = '4';
+	STACK_1 <-  read_keypad_var_L0 & 4
+	STACK_0 <- 2
+	STACK_1 <-  STACK_1 shr STACK_0
+	if ( STACK_1 != 0) then goto L_read_keypad_2
+	read_keypad_key_L0 <- 52
+	goto	L_read_keypad_3
+L_read_keypad_2:
+//part3.c,20 :: 		else if (var.F3 == 0) key = '1';
+	STACK_1 <-  read_keypad_var_L0 & 8
+	STACK_0 <- 3
+	STACK_1 <-  STACK_1 shr STACK_0
+	if ( STACK_1 != 0) then goto L_read_keypad_4
+	read_keypad_key_L0 <- 49
+L_read_keypad_4:
+L_read_keypad_3:
+//part3.c,21 :: 		PORTB.F0 =1;
+	PORTB <-  PORTB | 1
+//part3.c,24 :: 		PORTB.F1 = 0;
+	PORTB <-  PORTB & -3
+//part3.c,25 :: 		delay_ms(10);
+	asm: MOVLW	26
+	asm: MOVWF	STACK_11
+	asm: MOVLW	255
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_11,F
+	asm: GOTO	$+2
+	asm: GOTO	$+4
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: GOTO	$-5
+	asm: MOVLW	231
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: nop
+//part3.c,26 :: 		var = PORTD;
+	read_keypad_var_L0 <- PORTD
+//part3.c,28 :: 		if (var.F2 == 0)key = '5';
+	STACK_1 <-  read_keypad_var_L0 & 4
+	STACK_0 <- 2
+	STACK_1 <-  STACK_1 shr STACK_0
+	if ( STACK_1 != 0) then goto L_read_keypad_5
+	read_keypad_key_L0 <- 53
+	goto	L_read_keypad_6
+L_read_keypad_5:
+//part3.c,29 :: 		else if (var.F3 == 0)key = '2';
+	STACK_1 <-  read_keypad_var_L0 & 8
+	STACK_0 <- 3
+	STACK_1 <-  STACK_1 shr STACK_0
+	if ( STACK_1 != 0) then goto L_read_keypad_7
+	read_keypad_key_L0 <- 50
+L_read_keypad_7:
+L_read_keypad_6:
+//part3.c,30 :: 		PORTB.F1 =1;
+	PORTB <-  PORTB | 2
+//part3.c,33 :: 		PORTB.F2 =0;
+	PORTB <-  PORTB & -5
+//part3.c,34 :: 		delay_ms(10);
+	asm: MOVLW	26
+	asm: MOVWF	STACK_11
+	asm: MOVLW	255
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_11,F
+	asm: GOTO	$+2
+	asm: GOTO	$+4
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: GOTO	$-5
+	asm: MOVLW	231
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: nop
+//part3.c,35 :: 		var = PORTD;
+	read_keypad_var_L0 <- PORTD
+//part3.c,37 :: 		if (var.F3 == 0) key = '3';
+	STACK_1 <-  read_keypad_var_L0 & 8
+	STACK_0 <- 3
+	STACK_1 <-  STACK_1 shr STACK_0
+	if ( STACK_1 != 0) then goto L_read_keypad_8
+	read_keypad_key_L0 <- 51
+L_read_keypad_8:
+//part3.c,38 :: 		PORTB.F2 =1;
+	PORTB <-  PORTB | 4
+//part3.c,40 :: 		}while (key == 0);
+	if ( read_keypad_key_L0 = 0) then goto L_read_keypad_0
+L_read_keypad_1:
+//part3.c,42 :: 		return key;
+	STACK_0 <- read_keypad_key_L0
+	return
+  end
+
+_function_numbers:
+  begin
+//part3.c,47 :: 		switch(v)
+	goto	L_function_numbers_9
+//part3.c,49 :: 		case 1:
+L_function_numbers_11:
+//part3.c,50 :: 		return 0x06;
+	STACK_0 <- 6
+	return
+//part3.c,51 :: 		case 2:
+L_function_numbers_12:
+//part3.c,52 :: 		return 0x5B;
+	STACK_0 <- 91
+	return
+//part3.c,53 :: 		case 3:
+L_function_numbers_13:
+//part3.c,54 :: 		return 0x4F;
+	STACK_0 <- 79
+	return
+//part3.c,55 :: 		case 4:
+L_function_numbers_14:
+//part3.c,56 :: 		return 0x66;
+	STACK_0 <- 102
+	return
+//part3.c,57 :: 		case 5:
+L_function_numbers_15:
+//part3.c,58 :: 		return 0x6D;
+	STACK_0 <- 109
+	return
+//part3.c,59 :: 		}
+L_function_numbers_9:
+	if ( FARG_function_numbers+0 = 1) then goto L_function_numbers_11
+	if ( FARG_function_numbers+0 = 2) then goto L_function_numbers_12
+	if ( FARG_function_numbers+0 = 3) then goto L_function_numbers_13
+	if ( FARG_function_numbers+0 = 4) then goto L_function_numbers_14
+	if ( FARG_function_numbers+0 = 5) then goto L_function_numbers_15
+L_function_numbers_10:
+//part3.c,60 :: 		return 0;
+	STACK_0 <- 0
+	return
+  end
+
+_main:
+  begin
+//part3.c,68 :: 		keypressed = read_keypad();  //Reading a key from the keypad
+	CALL _read_keypad
+	main_keypressed_L0 <- STACK_0
+//part3.c,69 :: 		TRISD = 0x00;  //Define PORTD to operate as outpout
+	TRISD <- 0
+//part3.c,70 :: 		TRISA = 0xFB;  // Define PORTA pin 2 as output.
+	TRISA <- 251
+//part3.c,71 :: 		keypressed = keypressed - 0x30;
+	STACK_0 <-  STACK_0 - 48  [Optimized To Dest]
+	main_keypressed_L0 <- STACK_0
+//part3.c,72 :: 		PORTD = function_numbers(keypressed); //Write the appropriate combination of bits to PORTD
+	FARG_function_numbers+0 <- STACK_0
+	CALL _function_numbers
+	PORTD <- STACK_0
+//part3.c,73 :: 		switch (function_numbers(keypressed))
+	FARG_function_numbers+0 <- main_keypressed_L0
+	CALL _function_numbers
+	FLOC_main+27 <- STACK_0
+	goto	L_main_16
+//part3.c,75 :: 		case 0x4F:
+L_main_18:
+//part3.c,77 :: 		Pwm_Init(500);
+	asm: BSF	T2CON, T2CKPS0
+	asm: BSF	T2CON, T2CKPS1
+	asm: MOVLW	249
+	asm: MOVWF	PR2
+	CALL _PWM_Init
+//part3.c,80 :: 		Lcd8_Config(&PORTE, &PORTD, 2,1,0, 7,6,5,4,3,2,1,0);
+	FARG_Lcd8_Init+0 <- 0
+	FARG_Lcd8_Init+2 <- 0
+	CALL _Lcd8_Init
+//part3.c,81 :: 		Lcd8_Cmd(LCD_CLEAR);     // Clear screen
+	FARG_Lcd8_Cmd+0 <- 1
+	CALL _Lcd8_Cmd
+//part3.c,82 :: 		Lcd8_Out(1, 1, "Servo Motor"); // Print text on LCD
+	FARG_LCD8_Out+0 <- 1
+	FARG_LCD8_Out+1 <- 1
+	FARG_LCD8_Out+2 <- 0
+	CALL _LCD8_Out
+//part3.c,83 :: 		Lcd8_Out(2, 1, "Speed :"); // Print text on LCD
+	FARG_LCD8_Out+0 <- 2
+	FARG_LCD8_Out+1 <- 1
+	FARG_LCD8_Out+2 <- 0
+	CALL _LCD8_Out
+//part3.c,86 :: 		while (1)
+L_main_19:
+//part3.c,87 :: 		{ Pwm_Start();
+	CALL _PWM_Start
+//part3.c,88 :: 		adc_rd  = ADC_read(0);          // get ADC value from first channel
+	FARG_Adc_Read+0 <- 0
+	CALL _Adc_Read
+	_adc_rd <- STACK_0
+//part3.c,89 :: 		adc_final= adc_rd*0.25;        //convert adc values to [0-255] as instructed
+	STACK_0 <- (type cast)STACK_0
+	STACK_0 <-  STACK_0 * 2.500000E-001
+	STACK_0 <- (type cast)STACK_0
+	_adc_final <- STACK_0
+//part3.c,90 :: 		wordToStr(adc_final, text);
+	FARG_WordToStr+0 <- STACK_0
+	FARG_WordToStr+2 <- 0
+	CALL _WordToStr
+//part3.c,91 :: 		Lcd8_Out(2,8, text);
+	FARG_LCD8_Out+0 <- 2
+	FARG_LCD8_Out+1 <- 8
+	FARG_LCD8_Out+2 <- 0
+	CALL _LCD8_Out
+//part3.c,92 :: 		Pwm_Change_Duty(adc_final);       // adjusting the speed of the servo motor depending on the ADC values
+	FARG_PWM_Change_Duty+0 <- _adc_final
+	CALL _PWM_Change_Duty
+//part3.c,93 :: 		}
+	goto	L_main_19
+//part3.c,94 :: 		}
+L_main_16:
+	if ( FLOC_main+27 = 79) then goto L_main_18
+L_main_17:
+  end
+

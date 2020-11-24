@@ -1,0 +1,17 @@
+main
+	Usart_Init
+	Soft_I2C_Init
+	Usart_Write
+	strlen
+	Soft_I2C_Read
+		SoftI2C_PutZerosToLAT
+		Delay_1us
+	Soft_I2C_Stop
+		Delay_1us
+		SoftI2C_PutZerosToLAT
+	Soft_I2C_Write
+		SoftI2C_PutZerosToLAT
+		Delay_1us
+	Soft_I2C_Start
+		SoftI2C_PutZerosToLAT
+		Delay_1us

@@ -1,0 +1,549 @@
+_read_keypad:
+  begin
+//part1.c,19 :: 		PORTD = 0xFF;
+	PORTD <- 255
+//part1.c,20 :: 		TRISD = 0xFF;    //configure PORT D as inpout
+	TRISD <- 255
+//part1.c,22 :: 		TRISB = 0x00;     //configure PORT B as outpout
+	TRISB <- 0
+//part1.c,23 :: 		PORTB = 0xFF;     //set all pins of PORT B to 1;
+	PORTB <- 255
+//part1.c,25 :: 		key =0;
+	read_keypad_key_L0 <- 0
+//part1.c,26 :: 		do {                       //1-5 buttons
+L_read_keypad_0:
+//part1.c,28 :: 		PORTB.F0 = 0;
+	PORTB <-  PORTB & -2
+//part1.c,29 :: 		delay_ms(10);
+	asm: MOVLW	26
+	asm: MOVWF	STACK_11
+	asm: MOVLW	255
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_11,F
+	asm: GOTO	$+2
+	asm: GOTO	$+4
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: GOTO	$-5
+	asm: MOVLW	231
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: nop
+//part1.c,30 :: 		var = PORTD;
+	read_keypad_var_L0 <- PORTD
+//part1.c,32 :: 		if (var.F2 == 0) key = '4';
+	STACK_1 <-  read_keypad_var_L0 & 4
+	STACK_0 <- 2
+	STACK_1 <-  STACK_1 shr STACK_0
+	if ( STACK_1 != 0) then goto L_read_keypad_2
+	read_keypad_key_L0 <- 52
+	goto	L_read_keypad_3
+L_read_keypad_2:
+//part1.c,33 :: 		else if (var.F3 == 0) key = '1';
+	STACK_1 <-  read_keypad_var_L0 & 8
+	STACK_0 <- 3
+	STACK_1 <-  STACK_1 shr STACK_0
+	if ( STACK_1 != 0) then goto L_read_keypad_4
+	read_keypad_key_L0 <- 49
+L_read_keypad_4:
+L_read_keypad_3:
+//part1.c,34 :: 		PORTB.F0 =1;
+	PORTB <-  PORTB | 1
+//part1.c,37 :: 		PORTB.F1 = 0;
+	PORTB <-  PORTB & -3
+//part1.c,38 :: 		delay_ms(10);
+	asm: MOVLW	26
+	asm: MOVWF	STACK_11
+	asm: MOVLW	255
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_11,F
+	asm: GOTO	$+2
+	asm: GOTO	$+4
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: GOTO	$-5
+	asm: MOVLW	231
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: nop
+//part1.c,39 :: 		var = PORTD;
+	read_keypad_var_L0 <- PORTD
+//part1.c,41 :: 		if (var.F2 == 0)key = '5';
+	STACK_1 <-  read_keypad_var_L0 & 4
+	STACK_0 <- 2
+	STACK_1 <-  STACK_1 shr STACK_0
+	if ( STACK_1 != 0) then goto L_read_keypad_5
+	read_keypad_key_L0 <- 53
+	goto	L_read_keypad_6
+L_read_keypad_5:
+//part1.c,42 :: 		else if (var.F3 == 0)key = '2';
+	STACK_1 <-  read_keypad_var_L0 & 8
+	STACK_0 <- 3
+	STACK_1 <-  STACK_1 shr STACK_0
+	if ( STACK_1 != 0) then goto L_read_keypad_7
+	read_keypad_key_L0 <- 50
+L_read_keypad_7:
+L_read_keypad_6:
+//part1.c,43 :: 		PORTB.F1 =1;
+	PORTB <-  PORTB | 2
+//part1.c,46 :: 		PORTB.F2 =0;
+	PORTB <-  PORTB & -5
+//part1.c,47 :: 		delay_ms(10);
+	asm: MOVLW	26
+	asm: MOVWF	STACK_11
+	asm: MOVLW	255
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_11,F
+	asm: GOTO	$+2
+	asm: GOTO	$+4
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: GOTO	$-5
+	asm: MOVLW	231
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: nop
+//part1.c,48 :: 		var = PORTD;
+	read_keypad_var_L0 <- PORTD
+//part1.c,50 :: 		if (var.F3 == 0) key = '3';
+	STACK_1 <-  read_keypad_var_L0 & 8
+	STACK_0 <- 3
+	STACK_1 <-  STACK_1 shr STACK_0
+	if ( STACK_1 != 0) then goto L_read_keypad_8
+	read_keypad_key_L0 <- 51
+L_read_keypad_8:
+//part1.c,51 :: 		PORTB.F2 =1;
+	PORTB <-  PORTB | 4
+//part1.c,52 :: 		}while (key == 0);
+	if ( read_keypad_key_L0 = 0) then goto L_read_keypad_0
+L_read_keypad_1:
+//part1.c,54 :: 		return key;
+	STACK_0 <- read_keypad_key_L0
+	return
+  end
+
+_function_numbers:
+  begin
+//part1.c,59 :: 		switch(v)
+	goto	L_function_numbers_9
+//part1.c,61 :: 		case 1:
+L_function_numbers_11:
+//part1.c,62 :: 		return 0x06;
+	STACK_0 <- 6
+	return
+//part1.c,63 :: 		case 2:
+L_function_numbers_12:
+//part1.c,64 :: 		return 0x5B;
+	STACK_0 <- 91
+	return
+//part1.c,65 :: 		case 3:
+L_function_numbers_13:
+//part1.c,66 :: 		return 0x4F;
+	STACK_0 <- 79
+	return
+//part1.c,67 :: 		case 4:
+L_function_numbers_14:
+//part1.c,68 :: 		return 0x66;
+	STACK_0 <- 102
+	return
+//part1.c,69 :: 		case 5:
+L_function_numbers_15:
+//part1.c,70 :: 		return 0x6D;
+	STACK_0 <- 109
+	return
+//part1.c,72 :: 		}
+L_function_numbers_9:
+	if ( FARG_function_numbers+0 = 1) then goto L_function_numbers_11
+	if ( FARG_function_numbers+0 = 2) then goto L_function_numbers_12
+	if ( FARG_function_numbers+0 = 3) then goto L_function_numbers_13
+	if ( FARG_function_numbers+0 = 4) then goto L_function_numbers_14
+	if ( FARG_function_numbers+0 = 5) then goto L_function_numbers_15
+L_function_numbers_10:
+//part1.c,73 :: 		return 0;
+	STACK_0 <- 0
+	return
+  end
+
+_main:
+  begin
+//part1.c,83 :: 		keypressed = read_keypad();
+	CALL _read_keypad
+	main_keypressed_L0 <- STACK_0
+//part1.c,86 :: 		TRISD = 0x00;  //Define PORTD to operate as outpout
+	TRISD <- 0
+//part1.c,87 :: 		TRISA = 0xFB;  // Define PORTA pin 2 as output.
+	TRISA <- 251
+//part1.c,90 :: 		keypressed = keypressed - 0x30;
+	STACK_0 <-  STACK_0 - 48  [Optimized To Dest]
+	main_keypressed_L0 <- STACK_0
+//part1.c,92 :: 		PORTD = function_numbers(keypressed); //Write the appropriate combination of bits to PORTD
+	FARG_function_numbers+0 <- STACK_0
+	CALL _function_numbers
+	PORTD <- STACK_0
+//part1.c,93 :: 		switch (function_numbers(keypressed))
+	FARG_function_numbers+0 <- main_keypressed_L0
+	CALL _function_numbers
+	FLOC_main+31 <- STACK_0
+	goto	L_main_16
+//part1.c,95 :: 		case 0x06:
+L_main_18:
+//part1.c,97 :: 		TRISE = 0x00; // PORTE is output
+	TRISE <- 0
+//part1.c,98 :: 		TRISD = 0x00; // PORTD is output
+	TRISD <- 0
+//part1.c,99 :: 		I2C_Init(100000);
+	asm: MOVLW	20
+	asm: MOVWF	SSPADD
+	CALL _I2C_Init
+//part1.c,102 :: 		Soft_I2C_Config(&PORTC, 4, 3); //Use Port C pins 4 and 3
+	FARG_Soft_I2C_Init+0 <- 0
+	CALL _Soft_I2C_Init
+//part1.c,103 :: 		Soft_I2C_Start(); // Issue I2C start signal
+	CALL _Soft_I2C_Start
+//part1.c,104 :: 		Soft_I2C_Write(0xD0); // Send byte (device address + W)
+	FARG_Soft_I2C_Write+0 <- 208
+	CALL _Soft_I2C_Write
+//part1.c,105 :: 		Soft_I2C_Write(1); // Send byte (Location of minutes register)
+	FARG_Soft_I2C_Write+0 <- 1
+	CALL _Soft_I2C_Write
+//part1.c,106 :: 		Soft_I2C_Start(); // Issue I2C start signal
+	CALL _Soft_I2C_Start
+//part1.c,107 :: 		Soft_I2C_Write(0xD1); // Send byte (device address + R)
+	FARG_Soft_I2C_Write+0 <- 209
+	CALL _Soft_I2C_Write
+//part1.c,108 :: 		tempm = Soft_I2C_Read(0); // Read data (NO ACK)
+	FARG_Soft_I2C_Read+0 <- 0
+	CALL _Soft_I2C_Read
+	_tempm <- STACK_0
+//part1.c,109 :: 		Soft_I2C_Stop();
+	CALL _Soft_I2C_Stop
+//part1.c,110 :: 		minutes[0]=((tempm & 0x70)>>4)+0x30;
+	_minutes <-  _tempm & 112
+	STACK_0 <- 4
+	_minutes <-  _minutes shr STACK_0
+	_minutes <-  _minutes + 48  [Optimized To Dest]
+	_minutes <- _minutes
+//part1.c,111 :: 		minutes[1]= (tempm & 0x0F) +0x30;
+	_minutes+1 <-  _tempm & 15
+	_minutes+1 <-  _minutes+1 + 48  [Optimized To Dest]
+	_minutes+1 <- _minutes+1
+//part1.c,114 :: 		Soft_I2C_Config(&PORTC, 4, 3); //Use Port C pins 4 and 3
+	FARG_Soft_I2C_Init+0 <- 0
+	CALL _Soft_I2C_Init
+//part1.c,115 :: 		Soft_I2C_Start(); // Issue I2C start signal
+	CALL _Soft_I2C_Start
+//part1.c,116 :: 		Soft_I2C_Write(0xD0); // Send byte (device address + W)
+	FARG_Soft_I2C_Write+0 <- 208
+	CALL _Soft_I2C_Write
+//part1.c,117 :: 		Soft_I2C_Write(2); // Send byte (Location of hours register)
+	FARG_Soft_I2C_Write+0 <- 2
+	CALL _Soft_I2C_Write
+//part1.c,118 :: 		Soft_I2C_Start(); // Issue I2C start signal
+	CALL _Soft_I2C_Start
+//part1.c,119 :: 		Soft_I2C_Write(0xD1); // Send byte (device address + R)
+	FARG_Soft_I2C_Write+0 <- 209
+	CALL _Soft_I2C_Write
+//part1.c,120 :: 		temph = Soft_I2C_Read(0); // Read data (NO ACK)
+	FARG_Soft_I2C_Read+0 <- 0
+	CALL _Soft_I2C_Read
+	_temph <- STACK_0
+//part1.c,121 :: 		Soft_I2C_Stop();
+	CALL _Soft_I2C_Stop
+//part1.c,122 :: 		hours[0]=((temph & 0x30)>>4)+0x30;
+	_hours <-  _temph & 48
+	STACK_0 <- 4
+	_hours <-  _hours shr STACK_0
+	_hours <-  _hours + 48  [Optimized To Dest]
+	_hours <- _hours
+//part1.c,123 :: 		hours[1]= (temph & 0x0F) +0x30;
+	_hours+1 <-  _temph & 15
+	_hours+1 <-  _hours+1 + 48  [Optimized To Dest]
+	_hours+1 <- _hours+1
+//part1.c,127 :: 		Soft_I2C_Config(&PORTC, 4, 3); //Use PortC pins 4 and 3
+	FARG_Soft_I2C_Init+0 <- 0
+	CALL _Soft_I2C_Init
+//part1.c,128 :: 		Soft_I2C_Start(); // Issue I2C start signal
+	CALL _Soft_I2C_Start
+//part1.c,129 :: 		Soft_I2C_Write(0xA2); // Send byte via I2C (Address of 24cO2)
+	FARG_Soft_I2C_Write+0 <- 162
+	CALL _Soft_I2C_Write
+//part1.c,130 :: 		Soft_I2C_Write(2); // Send byte (address of EEPROM location)
+	FARG_Soft_I2C_Write+0 <- 2
+	CALL _Soft_I2C_Write
+//part1.c,131 :: 		Soft_I2C_Write(hours); // Send data (data to be written)
+	FARG_Soft_I2C_Write+0 <- 0
+	CALL _Soft_I2C_Write
+//part1.c,132 :: 		Soft_I2C_Write(minutes); // Send data (data to be written)
+	FARG_Soft_I2C_Write+0 <- 0
+	CALL _Soft_I2C_Write
+//part1.c,133 :: 		Soft_I2C_Stop();
+	CALL _Soft_I2C_Stop
+//part1.c,135 :: 		Soft_I2C_Start(); // Issue I2C start signal
+	CALL _Soft_I2C_Start
+//part1.c,136 :: 		Soft_I2C_Write(0xA2); // Send byte (device address + W)
+	FARG_Soft_I2C_Write+0 <- 162
+	CALL _Soft_I2C_Write
+//part1.c,137 :: 		Soft_I2C_Write(2); // Send byte (EEPROM location to read from)
+	FARG_Soft_I2C_Write+0 <- 2
+	CALL _Soft_I2C_Write
+//part1.c,138 :: 		Soft_I2C_Start(); // Issue I2C start signal
+	CALL _Soft_I2C_Start
+//part1.c,139 :: 		Soft_I2C_Write(0xA3); // Send byte (device address + R)
+	FARG_Soft_I2C_Write+0 <- 163
+	CALL _Soft_I2C_Write
+//part1.c,140 :: 		mem_data[0] = Soft_I2C_Read(1); // Read data (send ACK)
+	FARG_Soft_I2C_Read+0 <- 1
+	CALL _Soft_I2C_Read
+	_mem_data <- STACK_0
+//part1.c,141 :: 		mem_data[1] = Soft_I2C_Read(1); // Read data (send ACK)
+	FARG_Soft_I2C_Read+0 <- 1
+	CALL _Soft_I2C_Read
+	_mem_data+2 <- STACK_0
+//part1.c,145 :: 		Soft_I2C_Config(&PORTC, 4, 3); //Use Port C pins 4 and 3
+	FARG_Soft_I2C_Init+0 <- 0
+	CALL _Soft_I2C_Init
+//part1.c,146 :: 		Soft_I2C_Start(); // Issue I2C start signal
+	CALL _Soft_I2C_Start
+//part1.c,147 :: 		Soft_I2C_Write(0xD0); // Send byte (device address + W)
+	FARG_Soft_I2C_Write+0 <- 208
+	CALL _Soft_I2C_Write
+//part1.c,148 :: 		Soft_I2C_Write(4); // Send byte (Location of day register)
+	FARG_Soft_I2C_Write+0 <- 4
+	CALL _Soft_I2C_Write
+//part1.c,149 :: 		Soft_I2C_Start(); // Issue I2C start signal
+	CALL _Soft_I2C_Start
+//part1.c,150 :: 		Soft_I2C_Write(0xD1); // Send byte (device address + R)
+	FARG_Soft_I2C_Write+0 <- 209
+	CALL _Soft_I2C_Write
+//part1.c,151 :: 		tempDay = Soft_I2C_Read(0); // Read data (NO ACK)
+	FARG_Soft_I2C_Read+0 <- 0
+	CALL _Soft_I2C_Read
+	_tempDay <- STACK_0
+//part1.c,152 :: 		Soft_I2C_Stop();
+	CALL _Soft_I2C_Stop
+//part1.c,153 :: 		day[0]=((tempDay & 0x70)>>4)+0x30;
+	_day <-  _tempDay & 112
+	STACK_0 <- 4
+	_day <-  _day shr STACK_0
+	_day <-  _day + 48  [Optimized To Dest]
+	_day <- _day
+//part1.c,154 :: 		day[1]= (tempDay & 0x0F) +0x30;
+	_day+1 <-  _tempDay & 15
+	_day+1 <-  _day+1 + 48  [Optimized To Dest]
+	_day+1 <- _day+1
+//part1.c,157 :: 		Soft_I2C_Config(&PORTC, 4, 3); //Use Port C pins 4 and 3
+	FARG_Soft_I2C_Init+0 <- 0
+	CALL _Soft_I2C_Init
+//part1.c,158 :: 		Soft_I2C_Start(); // Issue I2C start signal
+	CALL _Soft_I2C_Start
+//part1.c,159 :: 		Soft_I2C_Write(0xD0); // Send byte (device address + W)
+	FARG_Soft_I2C_Write+0 <- 208
+	CALL _Soft_I2C_Write
+//part1.c,160 :: 		Soft_I2C_Write(5); // Send byte (Location of month register)
+	FARG_Soft_I2C_Write+0 <- 5
+	CALL _Soft_I2C_Write
+//part1.c,161 :: 		Soft_I2C_Start(); // Issue I2C start signal
+	CALL _Soft_I2C_Start
+//part1.c,162 :: 		Soft_I2C_Write(0xD1); // Send byte (device address + R)
+	FARG_Soft_I2C_Write+0 <- 209
+	CALL _Soft_I2C_Write
+//part1.c,163 :: 		tempMonth = Soft_I2C_Read(0); // Read data (NO ACK)
+	FARG_Soft_I2C_Read+0 <- 0
+	CALL _Soft_I2C_Read
+	_tempMonth <- STACK_0
+//part1.c,164 :: 		Soft_I2C_Stop();
+	CALL _Soft_I2C_Stop
+//part1.c,165 :: 		month[0]=((tempMonth & 0x30)>>4)+0x30;
+	_month <-  _tempMonth & 48
+	STACK_0 <- 4
+	_month <-  _month shr STACK_0
+	_month <-  _month + 48  [Optimized To Dest]
+	_month <- _month
+//part1.c,166 :: 		month[1]= (tempMonth & 0x0F) +0x30;
+	_month+1 <-  _tempMonth & 15
+	_month+1 <-  _month+1 + 48  [Optimized To Dest]
+	_month+1 <- _month+1
+//part1.c,169 :: 		Soft_I2C_Config(&PORTC, 4, 3); //Use Port C pins 4 and 3
+	FARG_Soft_I2C_Init+0 <- 0
+	CALL _Soft_I2C_Init
+//part1.c,170 :: 		Soft_I2C_Start(); // Issue I2C start signal
+	CALL _Soft_I2C_Start
+//part1.c,171 :: 		Soft_I2C_Write(0xD0); // Send byte (device address + W)
+	FARG_Soft_I2C_Write+0 <- 208
+	CALL _Soft_I2C_Write
+//part1.c,172 :: 		Soft_I2C_Write(6); // Send byte (Location of year register)
+	FARG_Soft_I2C_Write+0 <- 6
+	CALL _Soft_I2C_Write
+//part1.c,173 :: 		Soft_I2C_Start(); // Issue I2C start signal
+	CALL _Soft_I2C_Start
+//part1.c,174 :: 		Soft_I2C_Write(0xD1); // Send byte (device address + R)
+	FARG_Soft_I2C_Write+0 <- 209
+	CALL _Soft_I2C_Write
+//part1.c,175 :: 		tempYear = Soft_I2C_Read(0); // Read data (NO ACK)
+	FARG_Soft_I2C_Read+0 <- 0
+	CALL _Soft_I2C_Read
+	_tempYear <- STACK_0
+//part1.c,176 :: 		Soft_I2C_Stop();
+	CALL _Soft_I2C_Stop
+//part1.c,177 :: 		year[0]=((tempYear & 0x70)>>4)+0x30;
+	_year <-  _tempYear & 112
+	STACK_0 <- 4
+	_year <-  _year shr STACK_0
+	_year <-  _year + 48  [Optimized To Dest]
+	_year <- _year
+//part1.c,178 :: 		year[1]= (tempYear & 0x0F) +0x30;
+	_year+1 <-  _tempYear & 15
+	_year+1 <-  _year+1 + 48  [Optimized To Dest]
+	_year+1 <- _year+1
+//part1.c,183 :: 		Soft_I2C_Config(&PORTC, 4, 3); //Use PortC pins 4 and 3
+	FARG_Soft_I2C_Init+0 <- 0
+	CALL _Soft_I2C_Init
+//part1.c,184 :: 		Soft_I2C_Start(); // Issue I2C start signal
+	CALL _Soft_I2C_Start
+//part1.c,185 :: 		Soft_I2C_Write(0xA2); // Send byte via I2C (Address of 24cO2)
+	FARG_Soft_I2C_Write+0 <- 162
+	CALL _Soft_I2C_Write
+//part1.c,186 :: 		Soft_I2C_Write(2); // Send byte (address of EEPROM location)
+	FARG_Soft_I2C_Write+0 <- 2
+	CALL _Soft_I2C_Write
+//part1.c,187 :: 		Soft_I2C_Write(day); // Send data (data to be written)
+	FARG_Soft_I2C_Write+0 <- 0
+	CALL _Soft_I2C_Write
+//part1.c,189 :: 		Soft_I2C_Write(month); // Send data (data to be written)
+	FARG_Soft_I2C_Write+0 <- 0
+	CALL _Soft_I2C_Write
+//part1.c,190 :: 		Soft_I2C_Write(year); // Send data (data to be written)
+	FARG_Soft_I2C_Write+0 <- 0
+	CALL _Soft_I2C_Write
+//part1.c,192 :: 		Soft_I2C_Stop();
+	CALL _Soft_I2C_Stop
+//part1.c,194 :: 		Soft_I2C_Start(); // Issue I2C start signal
+	CALL _Soft_I2C_Start
+//part1.c,195 :: 		Soft_I2C_Write(0xA2); // Send byte (device address + W)
+	FARG_Soft_I2C_Write+0 <- 162
+	CALL _Soft_I2C_Write
+//part1.c,196 :: 		Soft_I2C_Write(2); // Send byte (EEPROM location to read from)
+	FARG_Soft_I2C_Write+0 <- 2
+	CALL _Soft_I2C_Write
+//part1.c,197 :: 		Soft_I2C_Start(); // Issue I2C start signal
+	CALL _Soft_I2C_Start
+//part1.c,198 :: 		Soft_I2C_Write(0xA3); // Send byte (device address + R)
+	FARG_Soft_I2C_Write+0 <- 163
+	CALL _Soft_I2C_Write
+//part1.c,199 :: 		mem2_data[0] = Soft_I2C_Read(1); // Read data (send ACK)
+	FARG_Soft_I2C_Read+0 <- 1
+	CALL _Soft_I2C_Read
+	_mem2_data <- STACK_0
+//part1.c,200 :: 		mem2_data[1] = Soft_I2C_Read(1); // Read data (send ACK)
+	FARG_Soft_I2C_Read+0 <- 1
+	CALL _Soft_I2C_Read
+	_mem2_data+2 <- STACK_0
+//part1.c,201 :: 		mem2_data[2] = Soft_I2C_Read(1); // Read data (send ACK)
+	FARG_Soft_I2C_Read+0 <- 1
+	CALL _Soft_I2C_Read
+	_mem2_data+4 <- STACK_0
+//part1.c,206 :: 		Lcd8_Config(&PORTE, &PORTD, 2,1,0, 7,6,5,4,3,2,1,0);
+	FARG_Lcd8_Init+0 <- 0
+	FARG_Lcd8_Init+2 <- 0
+	CALL _Lcd8_Init
+//part1.c,207 :: 		Lcd8_Cmd(LCD_CURSOR_OFF); // Turn on blinking cursor
+	FARG_Lcd8_Cmd+0 <- 12
+	CALL _Lcd8_Cmd
+//part1.c,208 :: 		Lcd8_Cmd(LCD_CLEAR);     // Clear screen
+	FARG_Lcd8_Cmd+0 <- 1
+	CALL _Lcd8_Cmd
+//part1.c,211 :: 		Lcd8_Out(1, 1,"Time=");
+	FARG_LCD8_Out+0 <- 1
+	FARG_LCD8_Out+1 <- 1
+	FARG_LCD8_Out+2 <- 0
+	CALL _LCD8_Out
+//part1.c,212 :: 		Lcd8_Out(1, 6,mem_data[0]);
+	FARG_LCD8_Out+0 <- 1
+	FARG_LCD8_Out+1 <- 6
+	FARG_LCD8_Out+2 <- _mem_data
+	CALL _LCD8_Out
+//part1.c,213 :: 		Lcd8_Out(1, 8,":") ;
+	FARG_LCD8_Out+0 <- 1
+	FARG_LCD8_Out+1 <- 8
+	FARG_LCD8_Out+2 <- 0
+	CALL _LCD8_Out
+//part1.c,214 :: 		Lcd8_Out(1, 9,mem_data[1]); // Print time on LCD
+	FARG_LCD8_Out+0 <- 1
+	FARG_LCD8_Out+1 <- 9
+	FARG_LCD8_Out+2 <- _mem_data+2
+	CALL _LCD8_Out
+//part1.c,216 :: 		Lcd8_Out(1, 11," ") ;
+	FARG_LCD8_Out+0 <- 1
+	FARG_LCD8_Out+1 <- 11
+	FARG_LCD8_Out+2 <- 0
+	CALL _LCD8_Out
+//part1.c,217 :: 		Lcd8_Out(1, 12," ") ;
+	FARG_LCD8_Out+0 <- 1
+	FARG_LCD8_Out+1 <- 12
+	FARG_LCD8_Out+2 <- 0
+	CALL _LCD8_Out
+//part1.c,218 :: 		Lcd8_Out(1, 13," ") ;
+	FARG_LCD8_Out+0 <- 1
+	FARG_LCD8_Out+1 <- 13
+	FARG_LCD8_Out+2 <- 0
+	CALL _LCD8_Out
+//part1.c,219 :: 		Lcd8_Out(1, 14," ") ;
+	FARG_LCD8_Out+0 <- 1
+	FARG_LCD8_Out+1 <- 14
+	FARG_LCD8_Out+2 <- 0
+	CALL _LCD8_Out
+//part1.c,220 :: 		Lcd8_Out(1, 15," ") ;
+	FARG_LCD8_Out+0 <- 1
+	FARG_LCD8_Out+1 <- 15
+	FARG_LCD8_Out+2 <- 0
+	CALL _LCD8_Out
+//part1.c,221 :: 		Lcd8_Out(1, 16," ") ;
+	FARG_LCD8_Out+0 <- 1
+	FARG_LCD8_Out+1 <- 16
+	FARG_LCD8_Out+2 <- 0
+	CALL _LCD8_Out
+//part1.c,223 :: 		Lcd8_Out(2, 1,"Date=");
+	FARG_LCD8_Out+0 <- 2
+	FARG_LCD8_Out+1 <- 1
+	FARG_LCD8_Out+2 <- 0
+	CALL _LCD8_Out
+//part1.c,224 :: 		Lcd8_Out(2, 6,mem2_data[0]);
+	FARG_LCD8_Out+0 <- 2
+	FARG_LCD8_Out+1 <- 6
+	FARG_LCD8_Out+2 <- _mem2_data
+	CALL _LCD8_Out
+//part1.c,225 :: 		Lcd8_Out(2, 8,"/") ;
+	FARG_LCD8_Out+0 <- 2
+	FARG_LCD8_Out+1 <- 8
+	FARG_LCD8_Out+2 <- 0
+	CALL _LCD8_Out
+//part1.c,226 :: 		Lcd8_Out(2, 9,mem2_data[1]); // Print month on LCD
+	FARG_LCD8_Out+0 <- 2
+	FARG_LCD8_Out+1 <- 9
+	FARG_LCD8_Out+2 <- _mem2_data+2
+	CALL _LCD8_Out
+//part1.c,227 :: 		Lcd8_Out(2, 11,"/") ;
+	FARG_LCD8_Out+0 <- 2
+	FARG_LCD8_Out+1 <- 11
+	FARG_LCD8_Out+2 <- 0
+	CALL _LCD8_Out
+//part1.c,228 :: 		Lcd8_Out(2, 12,mem2_data[2]); // Print year on LCD
+	FARG_LCD8_Out+0 <- 2
+	FARG_LCD8_Out+1 <- 12
+	FARG_LCD8_Out+2 <- _mem2_data+4
+	CALL _LCD8_Out
+//part1.c,229 :: 		Lcd8_Out(2, 14,mem2_data[2]); // Print year on LCD
+	FARG_LCD8_Out+0 <- 2
+	FARG_LCD8_Out+1 <- 14
+	FARG_LCD8_Out+2 <- _mem2_data+4
+	CALL _LCD8_Out
+//part1.c,230 :: 		}
+	goto	L_main_17
+L_main_16:
+	if ( FLOC_main+31 = 6) then goto L_main_18
+L_main_17:
+  end
+

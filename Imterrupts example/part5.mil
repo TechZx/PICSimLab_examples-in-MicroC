@@ -1,0 +1,300 @@
+_interrupt:
+  begin
+//part5.c,6 :: 		if(PORTC.F2 ==0)
+	STACK_1 <-  PORTC & 4
+	STACK_0 <- 2
+	STACK_1 <-  STACK_1 shr STACK_0
+	if ( STACK_1 != 0) then goto L_interrupt_0
+//part5.c,7 :: 		PORTC.F2 =1;          //turn on ventilator
+	PORTC <-  PORTC | 4
+L_interrupt_0:
+//part5.c,8 :: 		INTCON =  0b11010000;
+	INTCON <- 208
+  end
+
+_interrupt_low:
+  begin
+//part5.c,12 :: 		if(PORTC.F0 ==0)
+	STACK_1 <-  PORTC & 1
+	if ( STACK_1 != 0) then goto L_interrupt_low_1
+//part5.c,14 :: 		PORTC.F0 =1;
+	PORTC <-  PORTC | 1
+//part5.c,15 :: 		INTCON3 = 0b00010000; }      //turn on  relay
+	INTCON3 <- 16
+	goto	L_interrupt_low_2
+L_interrupt_low_1:
+//part5.c,18 :: 		PORTC.F1=0;
+	PORTC <-  PORTC & -3
+//part5.c,20 :: 		INTCON3 = 0b00011000;  }          //turn on buzzer
+	INTCON3 <- 24
+L_interrupt_low_2:
+  end
+
+_read_keypad:
+  begin
+//part5.c,25 :: 		PORTD = 0xFF;
+	PORTD <- 255
+//part5.c,26 :: 		TRISD = 0xFF;    //configure PORT D as inpout
+	TRISD <- 255
+//part5.c,27 :: 		TRISB = 0x00;     //configure PORT B as outpout
+	TRISB <- 0
+//part5.c,28 :: 		PORTB = 0xFF;     //set all pins of PORT B to 1;
+	PORTB <- 255
+//part5.c,29 :: 		key =0;
+	read_keypad_key_L0 <- 0
+//part5.c,30 :: 		do {                       //1-5 buttons
+L_read_keypad_3:
+//part5.c,32 :: 		PORTB.F0 = 0;
+	PORTB <-  PORTB & -2
+//part5.c,33 :: 		delay_ms(10);
+	asm: MOVLW	26
+	asm: MOVWF	STACK_11
+	asm: MOVLW	255
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_11,F
+	asm: GOTO	$+2
+	asm: GOTO	$+4
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: GOTO	$-5
+	asm: MOVLW	231
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: nop
+//part5.c,34 :: 		var = PORTD;
+	read_keypad_var_L0 <- PORTD
+//part5.c,36 :: 		if (var.F2 == 0) key = '4';
+	STACK_1 <-  read_keypad_var_L0 & 4
+	STACK_0 <- 2
+	STACK_1 <-  STACK_1 shr STACK_0
+	if ( STACK_1 != 0) then goto L_read_keypad_5
+	read_keypad_key_L0 <- 52
+	goto	L_read_keypad_6
+L_read_keypad_5:
+//part5.c,37 :: 		else if (var.F3 == 0) key = '1';
+	STACK_1 <-  read_keypad_var_L0 & 8
+	STACK_0 <- 3
+	STACK_1 <-  STACK_1 shr STACK_0
+	if ( STACK_1 != 0) then goto L_read_keypad_7
+	read_keypad_key_L0 <- 49
+L_read_keypad_7:
+L_read_keypad_6:
+//part5.c,38 :: 		PORTB.F0 =1;
+	PORTB <-  PORTB | 1
+//part5.c,41 :: 		PORTB.F1 = 0;
+	PORTB <-  PORTB & -3
+//part5.c,42 :: 		delay_ms(10);
+	asm: MOVLW	26
+	asm: MOVWF	STACK_11
+	asm: MOVLW	255
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_11,F
+	asm: GOTO	$+2
+	asm: GOTO	$+4
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: GOTO	$-5
+	asm: MOVLW	231
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: nop
+//part5.c,43 :: 		var = PORTD;
+	read_keypad_var_L0 <- PORTD
+//part5.c,45 :: 		if (var.F2 == 0)key = '5';
+	STACK_1 <-  read_keypad_var_L0 & 4
+	STACK_0 <- 2
+	STACK_1 <-  STACK_1 shr STACK_0
+	if ( STACK_1 != 0) then goto L_read_keypad_8
+	read_keypad_key_L0 <- 53
+	goto	L_read_keypad_9
+L_read_keypad_8:
+//part5.c,46 :: 		else if (var.F3 == 0)key = '2';
+	STACK_1 <-  read_keypad_var_L0 & 8
+	STACK_0 <- 3
+	STACK_1 <-  STACK_1 shr STACK_0
+	if ( STACK_1 != 0) then goto L_read_keypad_10
+	read_keypad_key_L0 <- 50
+L_read_keypad_10:
+L_read_keypad_9:
+//part5.c,47 :: 		PORTB.F1 =1;
+	PORTB <-  PORTB | 2
+//part5.c,50 :: 		PORTB.F2 =0;
+	PORTB <-  PORTB & -5
+//part5.c,51 :: 		delay_ms(10);
+	asm: MOVLW	26
+	asm: MOVWF	STACK_11
+	asm: MOVLW	255
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_11,F
+	asm: GOTO	$+2
+	asm: GOTO	$+4
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: GOTO	$-5
+	asm: MOVLW	231
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: nop
+//part5.c,52 :: 		var = PORTD;
+	read_keypad_var_L0 <- PORTD
+//part5.c,54 :: 		if (var.F3 == 0) key = '3';
+	STACK_1 <-  read_keypad_var_L0 & 8
+	STACK_0 <- 3
+	STACK_1 <-  STACK_1 shr STACK_0
+	if ( STACK_1 != 0) then goto L_read_keypad_11
+	read_keypad_key_L0 <- 51
+L_read_keypad_11:
+//part5.c,55 :: 		PORTB.F2 =1;
+	PORTB <-  PORTB | 4
+//part5.c,57 :: 		}while (key == 0);
+	if ( read_keypad_key_L0 = 0) then goto L_read_keypad_3
+L_read_keypad_4:
+//part5.c,59 :: 		return key;
+	STACK_0 <- read_keypad_key_L0
+	return
+  end
+
+_function_numbers:
+  begin
+//part5.c,64 :: 		switch(v)
+	goto	L_function_numbers_12
+//part5.c,66 :: 		case 1:
+L_function_numbers_14:
+//part5.c,67 :: 		return 0x06;
+	STACK_0 <- 6
+	return
+//part5.c,68 :: 		case 2:
+L_function_numbers_15:
+//part5.c,69 :: 		return 0x5B;
+	STACK_0 <- 91
+	return
+//part5.c,70 :: 		case 3:
+L_function_numbers_16:
+//part5.c,71 :: 		return 0x4F;
+	STACK_0 <- 79
+	return
+//part5.c,72 :: 		case 4:
+L_function_numbers_17:
+//part5.c,73 :: 		return 0x66;
+	STACK_0 <- 102
+	return
+//part5.c,74 :: 		case 5:
+L_function_numbers_18:
+//part5.c,75 :: 		return 0x6D;
+	STACK_0 <- 109
+	return
+//part5.c,76 :: 		}
+L_function_numbers_12:
+	if ( FARG_function_numbers+0 = 1) then goto L_function_numbers_14
+	if ( FARG_function_numbers+0 = 2) then goto L_function_numbers_15
+	if ( FARG_function_numbers+0 = 3) then goto L_function_numbers_16
+	if ( FARG_function_numbers+0 = 4) then goto L_function_numbers_17
+	if ( FARG_function_numbers+0 = 5) then goto L_function_numbers_18
+L_function_numbers_13:
+//part5.c,77 :: 		return 0;
+	STACK_0 <- 0
+	return
+  end
+
+_main:
+  begin
+//part5.c,85 :: 		keypressed = read_keypad();  //Reading a key from the keypad
+	CALL _read_keypad
+	main_keypressed_L0 <- STACK_0
+//part5.c,86 :: 		TRISD = 0x00;  //Define PORTD to operate as outpout
+	TRISD <- 0
+//part5.c,87 :: 		TRISA = 0xFB;  // Define PORTA pin 2 as output.
+	TRISA <- 251
+//part5.c,88 :: 		keypressed = keypressed - 0x30;
+	STACK_0 <-  STACK_0 - 48  [Optimized To Dest]
+	main_keypressed_L0 <- STACK_0
+//part5.c,89 :: 		PORTD = function_numbers(keypressed); //Write the appropriate combination of bits to PORTD
+	FARG_function_numbers+0 <- STACK_0
+	CALL _function_numbers
+	PORTD <- STACK_0
+//part5.c,90 :: 		switch (function_numbers(keypressed))
+	FARG_function_numbers+0 <- main_keypressed_L0
+	CALL _function_numbers
+	FLOC_main+47 <- STACK_0
+	goto	L_main_19
+//part5.c,92 :: 		case 0x6D:
+L_main_21:
+//part5.c,94 :: 		TRISC = 0x00;
+	TRISC <- 0
+//part5.c,95 :: 		TRISB = 0xFF;
+	TRISB <- 255
+//part5.c,96 :: 		PORTC.F1 =1;        // due to some difficulties with the programma the buzzer needs to be turned off on the begining of void main()
+	PORTC <-  PORTC | 2
+//part5.c,97 :: 		PORTC.F2 =0;
+	PORTC <-  PORTC & -5
+//part5.c,98 :: 		INTCON =  0b11010000;
+	INTCON <- 208
+//part5.c,99 :: 		INTCON3 = 0b00011000;
+	INTCON3 <- 24
+//part5.c,101 :: 		RCON =0x80;
+	RCON <- 128
+//part5.c,102 :: 		Lcd8_Config(&PORTE, &PORTD, 2,1,0, 7,6,5,4,3,2,1,0);     //define PORT and PIN Connections
+	FARG_Lcd8_Init+0 <- 0
+	FARG_Lcd8_Init+2 <- 0
+	CALL _Lcd8_Init
+//part5.c,103 :: 		Lcd8_Cmd(LCD_CURSOR_OFF); // Turn off blinking cursor
+	FARG_Lcd8_Cmd+0 <- 12
+	CALL _Lcd8_Cmd
+//part5.c,104 :: 		Lcd8_Cmd(LCD_CLEAR);     // Clear screen
+	FARG_Lcd8_Cmd+0 <- 1
+	CALL _Lcd8_Cmd
+//part5.c,106 :: 		Lcd8_Out(1, 1, "STEPPER MOTOR ON"); // Printing text on LCD in first line
+	FARG_LCD8_Out+0 <- 1
+	FARG_LCD8_Out+1 <- 1
+	FARG_LCD8_Out+2 <- 0
+	CALL _LCD8_Out
+//part5.c,107 :: 		while (1)
+L_main_22:
+//part5.c,110 :: 		text ="ABCDEFGHIJKLMNOPQRSTUVWXYZ";                 // printing A-Z with some delay so it is clearly working
+	main_text_L0 <- 0
+//part5.c,111 :: 		for (i=0;i<24;i++)
+	_i <- 0
+L_main_24:
+	if ( _i >= 24) then goto L_main_25
+//part5.c,112 :: 		Lcd8_Chr(2,8, text[i]);
+	FARG_Lcd8_Chr+0 <- 2
+	FARG_Lcd8_Chr+1 <- 8
+	FSR0L <-  main_text_L0 + _i
+	FARG_Lcd8_Chr+2 <- *FSR0L
+	FARG_Lcd8_Chr+2 <- FARG_Lcd8_Chr+2
+	CALL _Lcd8_Chr
+L_main_26:
+//part5.c,111 :: 		for (i=0;i<24;i++)
+	_i <-  _i + 1
+	_i <- _i
+//part5.c,112 :: 		Lcd8_Chr(2,8, text[i]);
+	goto	L_main_24
+L_main_25:
+//part5.c,113 :: 		delay_ms(2);
+	asm: MOVLW	6
+	asm: MOVWF	STACK_11
+	asm: MOVLW	255
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_11,F
+	asm: GOTO	$+2
+	asm: GOTO	$+4
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: GOTO	$-5
+	asm: MOVLW	44
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: nop
+	asm: nop
+//part5.c,114 :: 		}
+	goto	L_main_22
+//part5.c,115 :: 		}
+L_main_19:
+	if ( FLOC_main+47 = 109) then goto L_main_21
+L_main_20:
+  end
+

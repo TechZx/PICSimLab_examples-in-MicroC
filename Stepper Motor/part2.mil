@@ -1,0 +1,311 @@
+_read_keypad:
+  begin
+//part2.c,7 :: 		PORTD = 0xFF;
+	PORTD <- 255
+//part2.c,8 :: 		TRISD = 0xFF;    //configure PORT D as input
+	TRISD <- 255
+//part2.c,9 :: 		TRISB = 0x00;     //configure PORT B as output
+	TRISB <- 0
+//part2.c,10 :: 		PORTB = 0xFF;     //set all pins of PORT B to 1;
+	PORTB <- 255
+//part2.c,12 :: 		key =0;
+	read_keypad_key_L0 <- 0
+//part2.c,13 :: 		do {                       //1-5 buttons
+L_read_keypad_0:
+//part2.c,15 :: 		PORTB.F0 = 0;
+	PORTB <-  PORTB & -2
+//part2.c,16 :: 		delay_ms(10);
+	asm: MOVLW	26
+	asm: MOVWF	STACK_11
+	asm: MOVLW	255
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_11,F
+	asm: GOTO	$+2
+	asm: GOTO	$+4
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: GOTO	$-5
+	asm: MOVLW	231
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: nop
+//part2.c,17 :: 		var = PORTD;
+	read_keypad_var_L0 <- PORTD
+//part2.c,19 :: 		if (var.F2 == 0) key = '4';
+	STACK_1 <-  read_keypad_var_L0 & 4
+	STACK_0 <- 2
+	STACK_1 <-  STACK_1 shr STACK_0
+	if ( STACK_1 != 0) then goto L_read_keypad_2
+	read_keypad_key_L0 <- 52
+	goto	L_read_keypad_3
+L_read_keypad_2:
+//part2.c,20 :: 		else if (var.F3 == 0) key = '1';
+	STACK_1 <-  read_keypad_var_L0 & 8
+	STACK_0 <- 3
+	STACK_1 <-  STACK_1 shr STACK_0
+	if ( STACK_1 != 0) then goto L_read_keypad_4
+	read_keypad_key_L0 <- 49
+L_read_keypad_4:
+L_read_keypad_3:
+//part2.c,21 :: 		PORTB.F0 =1;
+	PORTB <-  PORTB | 1
+//part2.c,24 :: 		PORTB.F1 = 0;
+	PORTB <-  PORTB & -3
+//part2.c,25 :: 		delay_ms(10);
+	asm: MOVLW	26
+	asm: MOVWF	STACK_11
+	asm: MOVLW	255
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_11,F
+	asm: GOTO	$+2
+	asm: GOTO	$+4
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: GOTO	$-5
+	asm: MOVLW	231
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: nop
+//part2.c,26 :: 		var = PORTD;
+	read_keypad_var_L0 <- PORTD
+//part2.c,28 :: 		if (var.F2 == 0)key = '5';
+	STACK_1 <-  read_keypad_var_L0 & 4
+	STACK_0 <- 2
+	STACK_1 <-  STACK_1 shr STACK_0
+	if ( STACK_1 != 0) then goto L_read_keypad_5
+	read_keypad_key_L0 <- 53
+	goto	L_read_keypad_6
+L_read_keypad_5:
+//part2.c,29 :: 		else if (var.F3 == 0)key = '2';
+	STACK_1 <-  read_keypad_var_L0 & 8
+	STACK_0 <- 3
+	STACK_1 <-  STACK_1 shr STACK_0
+	if ( STACK_1 != 0) then goto L_read_keypad_7
+	read_keypad_key_L0 <- 50
+L_read_keypad_7:
+L_read_keypad_6:
+//part2.c,30 :: 		PORTB.F1 =1;
+	PORTB <-  PORTB | 2
+//part2.c,33 :: 		PORTB.F2 =0;
+	PORTB <-  PORTB & -5
+//part2.c,34 :: 		delay_ms(10);
+	asm: MOVLW	26
+	asm: MOVWF	STACK_11
+	asm: MOVLW	255
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_11,F
+	asm: GOTO	$+2
+	asm: GOTO	$+4
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: GOTO	$-5
+	asm: MOVLW	231
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: nop
+//part2.c,35 :: 		var = PORTD;
+	read_keypad_var_L0 <- PORTD
+//part2.c,37 :: 		if (var.F3 == 0) key = '3';
+	STACK_1 <-  read_keypad_var_L0 & 8
+	STACK_0 <- 3
+	STACK_1 <-  STACK_1 shr STACK_0
+	if ( STACK_1 != 0) then goto L_read_keypad_8
+	read_keypad_key_L0 <- 51
+L_read_keypad_8:
+//part2.c,38 :: 		PORTB.F2 =1;
+	PORTB <-  PORTB | 4
+//part2.c,40 :: 		}while (key == 0);
+	if ( read_keypad_key_L0 = 0) then goto L_read_keypad_0
+L_read_keypad_1:
+//part2.c,42 :: 		return key;
+	STACK_0 <- read_keypad_key_L0
+	return
+  end
+
+_function_numbers:
+  begin
+//part2.c,47 :: 		switch(v)
+	goto	L_function_numbers_9
+//part2.c,49 :: 		case 1:
+L_function_numbers_11:
+//part2.c,50 :: 		return 0x06;
+	STACK_0 <- 6
+	return
+//part2.c,51 :: 		case 2:
+L_function_numbers_12:
+//part2.c,52 :: 		return 0x5B;
+	STACK_0 <- 91
+	return
+//part2.c,53 :: 		case 3:
+L_function_numbers_13:
+//part2.c,54 :: 		return 0x4F;
+	STACK_0 <- 79
+	return
+//part2.c,55 :: 		case 4:
+L_function_numbers_14:
+//part2.c,56 :: 		return 0x66;
+	STACK_0 <- 102
+	return
+//part2.c,57 :: 		case 5:
+L_function_numbers_15:
+//part2.c,58 :: 		return 0x6D;
+	STACK_0 <- 109
+	return
+//part2.c,60 :: 		}
+L_function_numbers_9:
+	if ( FARG_function_numbers+0 = 1) then goto L_function_numbers_11
+	if ( FARG_function_numbers+0 = 2) then goto L_function_numbers_12
+	if ( FARG_function_numbers+0 = 3) then goto L_function_numbers_13
+	if ( FARG_function_numbers+0 = 4) then goto L_function_numbers_14
+	if ( FARG_function_numbers+0 = 5) then goto L_function_numbers_15
+L_function_numbers_10:
+//part2.c,61 :: 		return 0;
+	STACK_0 <- 0
+	return
+  end
+
+_main:
+  begin
+//part2.c,70 :: 		keypressed = read_keypad();
+	CALL _read_keypad
+	main_keypressed_L0 <- STACK_0
+//part2.c,71 :: 		TRISD = 0x00;  //Define PORTD to operate as outpout
+	TRISD <- 0
+//part2.c,72 :: 		TRISA = 0xFB;  // Define PORTA pin 2 as output.
+	TRISA <- 251
+//part2.c,75 :: 		keypressed = keypressed - 0x30;
+	STACK_0 <-  STACK_0 - 48  [Optimized To Dest]
+	main_keypressed_L0 <- STACK_0
+//part2.c,76 :: 		PORTD = function_numbers(keypressed); //Write the appropriate combination of bits to PORTD
+	FARG_function_numbers+0 <- STACK_0
+	CALL _function_numbers
+	PORTD <- STACK_0
+//part2.c,79 :: 		switch (function_numbers(keypressed) )
+	FARG_function_numbers+0 <- main_keypressed_L0
+	CALL _function_numbers
+	goto	L_main_16
+//part2.c,81 :: 		case 0x5B :
+L_main_18:
+//part2.c,82 :: 		TRISB.F4 =0x00;    //initiating steper ports
+	TRISB <-  TRISB & -17
+//part2.c,83 :: 		TRISB.F5 =0x00;      //sending 0 so they initialise again
+	TRISB <-  TRISB & -33
+//part2.c,84 :: 		TRISB.F6 =0x00;
+	TRISB <-  TRISB & -65
+//part2.c,85 :: 		TRISB.F7 =0x00;
+	TRISB <-  TRISB & -129
+//part2.c,86 :: 		PORTB=0x00;           // initialising port b
+	PORTB <- 0
+//part2.c,88 :: 		while(1)
+L_main_19:
+//part2.c,90 :: 		PORTB.F4 =0;
+	PORTB <-  PORTB & -17
+//part2.c,91 :: 		PORTB.F5 =1;
+	PORTB <-  PORTB | 32
+//part2.c,92 :: 		PORTB.F6 =0;
+	PORTB <-  PORTB & -65
+//part2.c,93 :: 		PORTB.F7 =1;
+	PORTB <-  PORTB | 128
+//part2.c,94 :: 		delay_ms(3);   //3ms delay
+	asm: MOVLW	8
+	asm: MOVWF	STACK_11
+	asm: MOVLW	255
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_11,F
+	asm: GOTO	$+2
+	asm: GOTO	$+4
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: GOTO	$-5
+	asm: MOVLW	196
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: nop
+	asm: nop
+//part2.c,96 :: 		PORTB.F4 =1;
+	PORTB <-  PORTB | 16
+//part2.c,97 :: 		PORTB.F5 =0;
+	PORTB <-  PORTB & -33
+//part2.c,98 :: 		PORTB.F6 =0;
+	PORTB <-  PORTB & -65
+//part2.c,99 :: 		PORTB.F7 =1;
+	PORTB <-  PORTB | 128
+//part2.c,100 :: 		delay_ms(3);
+	asm: MOVLW	8
+	asm: MOVWF	STACK_11
+	asm: MOVLW	255
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_11,F
+	asm: GOTO	$+2
+	asm: GOTO	$+4
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: GOTO	$-5
+	asm: MOVLW	196
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: nop
+	asm: nop
+//part2.c,102 :: 		PORTB.F4 =1;
+	PORTB <-  PORTB | 16
+//part2.c,103 :: 		PORTB.F5 =0;
+	PORTB <-  PORTB & -33
+//part2.c,104 :: 		PORTB.F6 =1;
+	PORTB <-  PORTB | 64
+//part2.c,105 :: 		PORTB.F7 =0;
+	PORTB <-  PORTB & -129
+//part2.c,106 :: 		delay_ms(3);
+	asm: MOVLW	8
+	asm: MOVWF	STACK_11
+	asm: MOVLW	255
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_11,F
+	asm: GOTO	$+2
+	asm: GOTO	$+4
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: GOTO	$-5
+	asm: MOVLW	196
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: nop
+	asm: nop
+//part2.c,108 :: 		PORTB.F4 =0;
+	PORTB <-  PORTB & -17
+//part2.c,109 :: 		PORTB.F5 =1;
+	PORTB <-  PORTB | 32
+//part2.c,110 :: 		PORTB.F6 =1;
+	PORTB <-  PORTB | 64
+//part2.c,111 :: 		PORTB.F7 =0;
+	PORTB <-  PORTB & -129
+//part2.c,112 :: 		delay_ms(3);
+	asm: MOVLW	8
+	asm: MOVWF	STACK_11
+	asm: MOVLW	255
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_11,F
+	asm: GOTO	$+2
+	asm: GOTO	$+4
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: GOTO	$-5
+	asm: MOVLW	196
+	asm: MOVWF	STACK_10
+	asm: DECFSZ	STACK_10,F
+	asm: GOTO	$-1
+	asm: nop
+	asm: nop
+//part2.c,113 :: 		}
+	goto	L_main_19
+//part2.c,114 :: 		}
+L_main_16:
+	if ( STACK_0 = 91) then goto L_main_18
+L_main_17:
+  end
+
